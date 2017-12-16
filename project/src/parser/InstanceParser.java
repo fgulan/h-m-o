@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 public class InstanceParser {
 
-    private static final String COMMENT_KEY = "%";
     private static final String EXAM_KEY = "test";
     private static final String MACHINE_KEY = "embedded_board";
     private static final String RESOURCE_KEY = "resource";

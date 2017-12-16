@@ -74,7 +74,7 @@ public class InstanceParser {
         if (match.find()) {
             return match.group(1);
         } else {
-            throw new RuntimeException("Invalid resource entry! -> " + line);
+            throw new RuntimeException("Invalid machine entry! -> " + line);
         }
     }
 

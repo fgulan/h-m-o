@@ -5,18 +5,18 @@ import java.util.Map;
 
 public class Instance {
 
-    private final List<Exam> exams;
+    private final List<Task> tasks;
     private final List<String> machines;
     private final Map<String, Resource> resources;
 
-    public Instance(List<Exam> exams, List<String> machines, Map<String, Resource> resources) {
-        this.exams = exams;
+    public Instance(List<Task> tasks, List<String> machines, Map<String, Resource> resources) {
+        this.tasks = tasks;
         this.machines = machines;
         this.resources = resources;
     }
 
-    public List<Exam> getExams() {
-        return exams;
+    public List<Task> getTasks() {
+        return tasks;
     }
 
     public List<String> getMachines() {

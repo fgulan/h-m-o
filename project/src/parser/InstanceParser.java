@@ -1,8 +1,8 @@
 package parser;
 
-import models.Exam;
 import models.Instance;
 import models.Resource;
+import models.Task;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class InstanceParser {
 
-    private static final String EXAM_KEY = "test";
+    private static final String TASK_KEY = "test";
     private static final String MACHINE_KEY = "embedded_board";
     private static final String RESOURCE_KEY = "resource";
 
@@ -23,7 +23,7 @@ public class InstanceParser {
             = Pattern.compile("resource\\(\\s*'(.+)',\\s*(\\d+)\\).");
     private static final Pattern MACHINE_PATTERN
             = Pattern.compile("embedded_board\\(\\s*'(.+)'\\).");
-    private static final Pattern EXAM_PATTERN
+    private static final Pattern TASK_PATTERN
             = Pattern.compile("test\\(\\s*'(.+)',\\s*(\\d+),\\s*\\[(.*)\\],\\s*\\[(.*)\\]\\).");
 
     public static Instance parseInstanceFile(String filePath) throws IOException {
@@ -40,11 +40,11 @@ public class InstanceParser {
         });
 
         // Now parse exams and machines
-        List<Exam> exams = new ArrayList<>();
+        List<Task> exams = new ArrayList<>();
         List<String> machines = new ArrayList<>();
         lines.forEach(line -> {
-            if (line.startsWith(EXAM_KEY)) {
-                exams.add(parseExam(line, resourceMap));
+            if (line.startsWith(TASK_KEY)) {
+                exams.add(parseTask(line, resourceMap));
             } else if (line.startsWith(MACHINE_KEY)) {
                 machines.add(parseMachine(line));
             }
@@ -52,8 +52,8 @@ public class InstanceParser {
         return new Instance(exams, machines, resourceMap);
     }
 
-    private static Exam parseExam(String line, Map<String, Resource> resourceMap) {
-        Matcher match = EXAM_PATTERN.matcher(line);
+    private static Task parseTask(String line, Map<String, Resource> resourceMap) {
+        Matcher match = TASK_PATTERN.matcher(line);
         if (match.find()) {
             String id = match.group(1);
             Integer duration = Integer.parseInt(match.group(2));
@@ -62,7 +62,7 @@ public class InstanceParser {
                     .stream()
                     .map(key -> resourceMap.get(key))
                     .collect(Collectors.toList());
-            return new Exam(id, duration, machines, resoruces);
+            return new Task(id, duration, machines, resoruces);
         } else {
             throw new RuntimeException("Invalid exam entry! -> " + line);
         }

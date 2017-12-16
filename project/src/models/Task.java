@@ -3,14 +3,14 @@ package models;
 import java.util.Collections;
 import java.util.List;
 
-public class Exam {
+public class Task {
 
     private final String id;
     private final int duration;
     private final List<String> machines;
     private final List<Resource> resources;
 
-    public Exam(String id, int duration, List<String> machines, List<Resource> resources) {
+    public Task(String id, int duration, List<String> machines, List<Resource> resources) {
         this.id = id;
         this.duration = duration;
         this.machines = Collections.unmodifiableList(machines);

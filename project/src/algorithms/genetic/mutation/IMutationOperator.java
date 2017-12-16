@@ -1,7 +1,7 @@
-package algorithms.genetic.mutations;
+package algorithms.genetic.mutation;
 
 import algorithms.interfaces.ISolution;
 
 public interface IMutationOperator<S extends ISolution<?>> {
-    void mutate(S solution);
+    S mutate(S solution);
 }

@@ -17,7 +17,9 @@ public class Instance {
 
     private Random random;
 
-    public Instance(Map<String, Task> tasks, Map<String, Machine> machines, Map<String, Resource> resources) {
+    public List<Task> sorted;
+
+    public Instance(Map<String, Task> tasks, Map<String, Machine> machines, Map<String, Resource> resources, List<Task> sorted) {
         this.tasks = tasks;
         this.machines = machines;
         this.resources = resources;
@@ -27,6 +29,7 @@ public class Instance {
         this.resourcesList = resources.values().stream().collect(Collectors.toList());
 
         this.random = new Random();
+        this.sorted = sorted;
     }
 
     public Map<String, Task> getTasks() {

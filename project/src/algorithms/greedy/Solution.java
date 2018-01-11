@@ -2,6 +2,7 @@ package algorithms.greedy;
 
 import models.*;
 import utils.ArrayUtils;
+import utils.Pair;
 
 import java.util.*;
 
@@ -22,87 +23,85 @@ public class Solution {
         List<Machine> keys = new ArrayList<>(machineTimeTable.keySet());
         Collections.shuffle(keys);
         for (Machine machine : keys) {
-            process(machine, machineTimeTable.get(machine));
+            process(machineTimeTable.get(machine));
         }
         return this;
     }
 
-    private void process(Machine machine, List<TaskTimeEntry> entries) {
+    private void process(List<TaskTimeEntry> entries) {
         Integer size = entries.size();
 
         for (int i = 0; i < size; i++) {
             TaskTimeEntry entry = entries.get(i);
-            int newStartTime = findNextAvailableStartTime(entry);
-            if (entry.getStartTime() < newStartTime) {
-                shiftEntriesFromIndex(entries, i, newStartTime - entry.getStartTime());
+            if (entry.getTask().getResources().size() == 0) {
+                continue;
             }
-            addResourceEntry(entry);
+            Pair<Insertion, List<Insertion>> pair = findNextAvailableStartTime(entry);
+            Insertion maxInsertion = pair.getFirst();
+            List<Insertion> allInsertions = pair.getSecond();
+            shiftEntries(entries, i, maxInsertion.newStartTime - entry.getStartTime());
+            insertEntry(entry, allInsertions);
         }
     }
 
-    private void addResourceEntry(TaskTimeEntry entry) {
-        List<Resource> neededResources = entry.getTask().getResources();
-        for (Resource resource : neededResources) {
-            List<ResourceTimeTableEntry> timeTable = resourceTimeTable.get(resource);
-            for (ResourceTimeTableEntry timeTableEntry : timeTable) {
-                if (timeTableEntry.addEntry(entry)) {
-                    break;
-                }
-            }
+    private void insertEntry(TaskTimeEntry entry, List<Insertion> allInsertions) {
+        for (Insertion insertion : allInsertions) {
+            insertion.timeTableEntry.insertEntry(insertion.indexInTimeTable, entry);
         }
     }
 
-    private void shiftEntriesFromIndex(List<TaskTimeEntry> entries, int index, int offset) {
+    private void shiftEntries(List<TaskTimeEntry> entries, int index, int offset) {
         Integer size = entries.size();
         for (int i = index; i < size; i++) {
             entries.get(i).shift(offset);
         }
     }
 
-    private int findNextAvailableStartTime(TaskTimeEntry entry) {
+    private Pair<Insertion, List<Insertion>> findNextAvailableStartTime(TaskTimeEntry entry) {
         int newStartTime = entry.getStartTime();
+
         List<Resource> neededResources = entry.getTask().getResources();
         Collections.shuffle(neededResources);
-        for (Resource resource : neededResources) {
-            int resourceStart = findNextAvailableStartTimeForResource(resource, entry);
-            if (resourceStart > newStartTime) {
-                newStartTime = resourceStart;
+
+        Insertion maxInsertion = null;
+        List<Insertion> allInsertions = new ArrayList<>();
+
+        int lastStartTime = newStartTime;
+        while (true) {
+            allInsertions.clear();
+            for (Resource resource : neededResources) {
+                Insertion currentInsertion = findNextAvailableStartTimeForResource(resource, newStartTime, entry.getDuration());
+                allInsertions.add(currentInsertion);
+                if (currentInsertion.newStartTime >= newStartTime) {
+                    newStartTime = currentInsertion.newStartTime;
+                    maxInsertion = currentInsertion;
+                }
+            }
+            if (newStartTime == lastStartTime) {
+                break;
+            } else {
+                lastStartTime = newStartTime;
             }
         }
-        return newStartTime;
+
+        return new Pair<>(maxInsertion, allInsertions);
     }
 
-    private int findNextAvailableStartTimeForResource(Resource resource, TaskTimeEntry entry) {
+    private Insertion findNextAvailableStartTimeForResource(Resource resource, int startTime, int duration) {
         List<ResourceTimeTableEntry> timeTable = resourceTimeTable.get(resource);
+        int maximalStartTime = Integer.MAX_VALUE;
+        Insertion minimalFeasibleInsertion = null;
 
-        int newStartTime = 0;
+        Insertion currentInsertion = null;
         for (ResourceTimeTableEntry timeTableEntry : timeTable) {
-            int size = timeTableEntry.entries.size();
-            if (size == 0) {
-                continue;
-            } else if (size == 1) {
-                TaskTimeEntry currentEntry = timeTableEntry.entries.get(0);
-                if (currentEntry.getEndTime() > newStartTime) {
-                    newStartTime = currentEntry.getEndTime();
-                }
-                continue;
-            }
-
-            for (int i = 0; i < size - 1; i++) {
-                TaskTimeEntry currentEntry = timeTableEntry.entries.get(i);
-                TaskTimeEntry nextEntry = timeTableEntry.entries.get(i + 1);
-                int tempTime;
-                if (nextEntry.getStartTime() - currentEntry.getEndTime() >= entry.getDuration()) {
-                    tempTime = currentEntry.getEndTime();
-                } else {
-                    tempTime = nextEntry.getEndTime();
-                }
-                if (tempTime > newStartTime) {
-                    newStartTime = tempTime;
-                }
+            currentInsertion = timeTableEntry.findStartForEntry(startTime, duration);
+            if (currentInsertion.newStartTime >= startTime
+                    && currentInsertion.newStartTime < maximalStartTime) {
+                maximalStartTime = currentInsertion.newStartTime;
+                minimalFeasibleInsertion = currentInsertion;
             }
         }
-        return newStartTime;
+        return minimalFeasibleInsertion;
     }
 
     public Map<Machine, List<TaskTimeEntry>> getMachineTimeTable() {
@@ -136,6 +135,8 @@ public class Solution {
 
     public String printIt() {
         StringBuilder builder = new StringBuilder();
+        Map<String, PrintoutModel> printout = new HashMap<>();
+
         List<Machine> keys = new ArrayList<>(machineTimeTable.keySet());
         for (Machine machine : keys) {
             List<TaskTimeEntry> entries = machineTimeTable.get(machine);
@@ -150,5 +151,22 @@ public class Solution {
             }
         }
         return builder.toString();
+    }
+
+    public boolean isSorted() {
+        boolean sorted = true;
+        List<Resource> resources = instance.getResourcesList();
+
+        for (Resource resource : resources) {
+            List<ResourceTimeTableEntry> timeTableEntryList = resourceTimeTable.get(resource);
+            for (ResourceTimeTableEntry timeTableEntry : timeTableEntryList) {
+                sorted = sorted && timeTableEntry.isSorted();
+                if (!sorted) {
+                    System.out.println("Kurko boii 22");
+                }
+            }
+        }
+
+        return sorted;
     }
 }

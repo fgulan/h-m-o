@@ -52,14 +52,16 @@ public class InstanceParser {
         // And now parse task and asign machines
         Map<String, Task> taskMap = new HashMap<>();
 
+        List<Task> tasksList = new ArrayList<>();
         lines.forEach(line -> {
             if (line.startsWith(TASK_KEY)) {
                 Task task = parseTask(line, resourceMap, machineMap);
                 taskMap.put(task.getId(), task);
+                tasksList.add(task);
             }
         });
 
-        return new Instance(taskMap, machineMap, resourceMap);
+        return new Instance(taskMap, machineMap, resourceMap, tasksList);
     }
 
     private static Task parseTask(String line, Map<String, Resource> resourceMap, Map<String, Machine> machineMap) {

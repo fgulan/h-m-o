@@ -1,9 +1,10 @@
 package algorithms.genetic.crossover;
 
+import algorithms.greedy.Solution;
 import algorithms.interfaces.ISolution;
 import utils.Pair;
 
-public interface ICrossoverOperator<S extends ISolution<?>> {
+public interface ICrossoverOperator {
 
-    Pair<S, S> crossover(S firstParent, S secondParent);
+    Solution crossover(Solution sol1, Solution sol2);
 }

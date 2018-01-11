@@ -22,7 +22,7 @@ public class Resource {
 
     @Override
     public String toString() {
-        return String.format("resource (%s, %s)", id, count);
+        return String.format("%s => %s", id, count);
     }
 
     @Override

@@ -9,16 +9,22 @@ import java.util.*;
 public class Solution {
 
     private Map<Machine, List<TaskTimeEntry>> machineTimeTable;
+    private Map<Task, TaskTimeEntry> taskEntryMap;
+
     private Map<Resource, List<ResourceTimeTableEntry>> resourceTimeTable;
     private Instance instance;
+    private Integer duration;
 
-    public Solution(Map<Machine, List<TaskTimeEntry>> machineTimeTable, Instance instance) {
+    public Solution(Map<Machine, List<TaskTimeEntry>> machineTimeTable, Map<Task, TaskTimeEntry> taskEntryMap, Instance instance) {
         this.machineTimeTable = machineTimeTable;
         this.resourceTimeTable = createInitialResourceTimeTable(instance.getResourcesList());
         this.instance = instance;
+        this.taskEntryMap = taskEntryMap;
+        this.duration = null;
     }
 
     public Solution makeItFeasible() {
+        this.duration = null;
         this.resourceTimeTable = createInitialResourceTimeTable(instance.getResourcesList());
         List<Machine> keys = new ArrayList<>(machineTimeTable.keySet());
         Collections.shuffle(keys);
@@ -26,6 +32,57 @@ public class Solution {
             process(machineTimeTable.get(machine));
         }
         return this;
+    }
+
+    public Solution compressClearedTasks() {
+        this.duration = null;
+        List<Task> tasks = instance.getClearTasksList();
+        for (Task task : tasks) {
+            TaskTimeEntry entry = taskEntryMap.get(task);
+            moveClearEntryToBestSpot(entry);
+        }
+        return this;
+    }
+
+    private void moveClearEntryToBestSpot(TaskTimeEntry entry) {
+        if (!entry.getTask().getResources().isEmpty()) {
+            throw new RuntimeException("It has resources");
+        }
+        List<TaskTimeEntry> entries = machineTimeTable.get(entry.getMachine());
+        int size = entries.size();
+        int duration = entry.getDuration();
+        if (size == 0) {
+            // Prolly never
+            entry.setStartTime(0);
+            entry.setEndTime(duration);
+        } else if (size == 1) {
+            TaskTimeEntry currEntry = entries.get(0);
+            if (currEntry.getStartTime() - duration >= 0) {
+                entry.setStartTime(0);
+                entry.setEndTime(duration);
+            } else {
+                entry.setStartTime(currEntry.getEndTime());
+                entry.setEndTime(currEntry.getEndTime() + duration);
+            }
+        } else {
+            TaskTimeEntry currEntry = entries.get(0);
+            if (currEntry.getStartTime() - duration >= 0) {
+                entry.setStartTime(0);
+                entry.setEndTime(duration);
+            } else {
+                for (int i = 0; i < size - 1; i++) {
+                    TaskTimeEntry curr = entries.get(i);
+                    TaskTimeEntry next = entries.get(i + 1);
+                    if (next.getStartTime() - curr.getEndTime() >= duration) {
+                        entry.setStartTime(curr.getEndTime());
+                        entry.setEndTime(curr.getEndTime() + duration);
+                        break;
+                    }
+                }
+            }
+        }
+        Collections.sort(entries);
+        machineTimeTable.put(entry.getMachine(), entries);
     }
 
     private void process(List<TaskTimeEntry> entries) {
@@ -109,6 +166,9 @@ public class Solution {
     }
 
     public int totalDuration() {
+        if (duration != null) {
+            return duration;
+        }
         int totalDuration = 0;
         for (Machine machine : instance.getMachinesList()) {
             List<TaskTimeEntry> entries = machineTimeTable.get(machine);
@@ -117,6 +177,7 @@ public class Solution {
                 totalDuration = last.getEndTime();
             }
         }
+        this.duration = totalDuration;
         return totalDuration;
     }
 
@@ -135,8 +196,6 @@ public class Solution {
 
     public String printIt() {
         StringBuilder builder = new StringBuilder();
-        Map<String, PrintoutModel> printout = new HashMap<>();
-
         List<Machine> keys = new ArrayList<>(machineTimeTable.keySet());
         for (Machine machine : keys) {
             List<TaskTimeEntry> entries = machineTimeTable.get(machine);
@@ -168,5 +227,13 @@ public class Solution {
         }
 
         return sorted;
+    }
+
+    public Instance getInstance() {
+        return instance;
+    }
+
+    public Map<Task, TaskTimeEntry> getTaskEntryMap() {
+        return taskEntryMap;
     }
 }

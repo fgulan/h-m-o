@@ -14,10 +14,12 @@ public class GreedySolutionGenerator {
     }
 
     public Solution generateBasicSolution() {
-        Map<Machine, List<TaskTimeEntry>>
-                machineTimeTable = createInitialMachineTimeTable(instance.getMachinesList());
+        Map<Machine, List<TaskTimeEntry>> machineTimeTable = instance.createInitialMachineTimeTable();
+
+        Map<Task, TaskTimeEntry> taskEntryMap = new HashMap<>();
 
         List<Task> tasks = instance.getTasksList();
+        Collections.shuffle(tasks);
 
         for (Task task : tasks) {
             Machine machine = getBestMachine(task, machineTimeTable);
@@ -29,8 +31,10 @@ public class GreedySolutionGenerator {
                 entry = new TaskTimeEntry(entry, task);
             }
             entries.add(entry);
+            entry.setMachine(machine);
+            taskEntryMap.put(task, entry);
         }
-        return new Solution(machineTimeTable, instance);
+        return new Solution(machineTimeTable, taskEntryMap, instance);
     }
 
     private Machine getBestMachine(Task task, Map<Machine, List<TaskTimeEntry>> machineTimeTable) {
@@ -54,14 +58,6 @@ public class GreedySolutionGenerator {
             }
         }
         return bestMachine;
-    }
-
-    private Map<Machine, List<TaskTimeEntry>> createInitialMachineTimeTable(List<Machine> machines) {
-        Map<Machine, List<TaskTimeEntry>> machineTimeTable = new HashMap<>();
-        for (Machine machine : machines) {
-            machineTimeTable.put(machine, new ArrayList<>());
-        }
-        return machineTimeTable;
     }
 
     private List<TaskTimeEntry> getEntriesForMachine(Machine machine, Map<Machine, List<TaskTimeEntry>> machineTimeTable) {

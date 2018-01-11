@@ -1,10 +1,12 @@
 package models;
 
+import javax.crypto.Mac;
 import java.util.Objects;
 
 public class TaskTimeEntry implements Comparable<TaskTimeEntry> {
 
     private Task task;
+    private Machine machine;
     private int startTime;
     private int endTime;
 
@@ -28,10 +30,6 @@ public class TaskTimeEntry implements Comparable<TaskTimeEntry> {
 
     public Task getTask() {
         return task;
-    }
-
-    public void setTask(Task task) {
-        this.task = task;
     }
 
     public int getStartTime() {
@@ -58,6 +56,14 @@ public class TaskTimeEntry implements Comparable<TaskTimeEntry> {
         this.startTime += offset;
         this.endTime += offset;
         return this;
+    }
+
+    public Machine getMachine() {
+        return machine;
+    }
+
+    public void setMachine(Machine machine) {
+        this.machine = machine;
     }
 
     @Override

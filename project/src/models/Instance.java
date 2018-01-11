@@ -1,8 +1,6 @@
 package models;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Instance {
@@ -14,6 +12,8 @@ public class Instance {
     private final List<Task> tasksList;
     private final List<Machine> machinesList;
     private final List<Resource> resourcesList;
+
+    private final List<Task> clearTasksList;
 
     private Random random;
 
@@ -30,6 +30,9 @@ public class Instance {
 
         this.random = new Random();
         this.sorted = sorted;
+        this.clearTasksList = tasksList.stream()
+                .filter(task -> task.getResources().isEmpty())
+                .collect(Collectors.toList());
     }
 
     public Map<String, Task> getTasks() {
@@ -45,7 +48,7 @@ public class Instance {
     }
 
     public List<Task> getTasksList() {
-        return tasksList;
+        return new ArrayList<>(tasksList);
     }
 
     public List<Machine> getMachinesList() {
@@ -56,9 +59,33 @@ public class Instance {
         return resourcesList;
     }
 
+    public int getTestCount() {
+        return tasksList.size();
+    }
+
+    public int getMachineCount() {
+        return machinesList.size();
+    }
+
+    public int getResourceCount() {
+        return resourcesList.size();
+    }
+
     public Machine getRandomMachineForTask(Task task) {
         List<Machine> availableMachines = task.getMachines();
         int index = random.nextInt(availableMachines.size());
         return availableMachines.get(index);
+    }
+
+    public List<Task> getClearTasksList() {
+        return clearTasksList;
+    }
+
+    public Map<Machine, List<TaskTimeEntry>> createInitialMachineTimeTable() {
+        Map<Machine, List<TaskTimeEntry>> machineTimeTable = new HashMap<>();
+        for (Machine machine : machinesList) {
+            machineTimeTable.put(machine, new ArrayList<>());
+        }
+        return machineTimeTable;
     }
 }

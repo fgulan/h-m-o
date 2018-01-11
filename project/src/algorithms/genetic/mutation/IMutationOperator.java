@@ -1,7 +1,8 @@
 package algorithms.genetic.mutation;
 
-import algorithms.interfaces.ISolution;
+import algorithms.greedy.Solution;
 
-public interface IMutationOperator<S extends ISolution<?>> {
-    S mutate(S solution);
+public interface IMutationOperator {
+
+    Solution mutate(Solution solution);
 }

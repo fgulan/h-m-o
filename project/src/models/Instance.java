@@ -2,28 +2,60 @@ package models;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Instance {
 
-    private final List<Task> tasks;
-    private final List<String> machines;
+    private final Map<String, Task> tasks;
+    private final Map<String, Machine> machines;
     private final Map<String, Resource> resources;
 
-    public Instance(List<Task> tasks, List<String> machines, Map<String, Resource> resources) {
+    private final List<Task> tasksList;
+    private final List<Machine> machinesList;
+    private final List<Resource> resourcesList;
+
+    private Random random;
+
+    public Instance(Map<String, Task> tasks, Map<String, Machine> machines, Map<String, Resource> resources) {
         this.tasks = tasks;
         this.machines = machines;
         this.resources = resources;
+
+        this.tasksList = tasks.values().stream().collect(Collectors.toList());
+        this.machinesList = machines.values().stream().collect(Collectors.toList());
+        this.resourcesList = resources.values().stream().collect(Collectors.toList());
+
+        this.random = new Random();
     }
 
-    public List<Task> getTasks() {
+    public Map<String, Task> getTasks() {
         return tasks;
     }
 
-    public List<String> getMachines() {
+    public Map<String, Machine> getMachines() {
         return machines;
     }
 
     public Map<String, Resource> getResources() {
         return resources;
+    }
+
+    public List<Task> getTasksList() {
+        return tasksList;
+    }
+
+    public List<Machine> getMachinesList() {
+        return machinesList;
+    }
+
+    public List<Resource> getResourcesList() {
+        return resourcesList;
+    }
+
+    public Machine getRandomMachineForTask(Task task) {
+        List<Machine> availableMachines = task.getMachines();
+        int index = random.nextInt(availableMachines.size());
+        return availableMachines.get(index);
     }
 }

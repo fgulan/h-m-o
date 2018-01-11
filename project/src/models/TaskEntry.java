@@ -35,4 +35,9 @@ public class TaskEntry {
     public void setStartTime(int startTime) {
         this.startTime = startTime;
     }
+
+    @Override
+    public String toString() {
+        return String.format("'%s',%d,'%s'", task.getId(), startTime, machine);
+    }
 }

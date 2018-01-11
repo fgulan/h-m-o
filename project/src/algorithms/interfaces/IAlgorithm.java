@@ -1,6 +1,6 @@
 package algorithms.interfaces;
 
-public interface IAlgorithm {
+public interface IAlgorithm<S extends ISolution<?>> {
 
-    public void run();
+    S run();
 }

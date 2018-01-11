@@ -1,16 +1,18 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class Task {
 
     private final String id;
     private final int duration;
-    private final List<String> machines;
+    private final List<Machine> machines;
     private final List<Resource> resources;
 
-    public Task(String id, int duration, List<String> machines, List<Resource> resources) {
+    public Task(String id, int duration, List<Machine> machines, List<Resource> resources) {
         this.id = id;
         this.duration = duration;
         this.machines = Collections.unmodifiableList(machines);
@@ -25,11 +27,25 @@ public class Task {
         return duration;
     }
 
-    public List<String> getMachines() {
-        return machines;
+    public List<Machine> getMachines() {
+        return new ArrayList<>(machines);
     }
 
     public List<Resource> getResources() {
-        return resources;
+        return new ArrayList<>(resources);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return duration == task.duration &&
+                Objects.equals(id, task.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, duration);
     }
 }

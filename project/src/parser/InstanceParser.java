@@ -1,6 +1,7 @@
 package parser;
 
 import models.Instance;
+import models.Machine;
 import models.Resource;
 import models.Task;
 
@@ -39,25 +40,43 @@ public class InstanceParser {
             }
         });
 
-        // Now parse exams and machines
-        List<Task> exams = new ArrayList<>();
-        List<String> machines = new ArrayList<>();
+        // Then parse machines
+        Map<String, Machine> machineMap = new HashMap<>();
         lines.forEach(line -> {
-            if (line.startsWith(TASK_KEY)) {
-                exams.add(parseTask(line, resourceMap));
-            } else if (line.startsWith(MACHINE_KEY)) {
-                machines.add(parseMachine(line));
+           if (line.startsWith(MACHINE_KEY)) {
+                Machine machine = parseMachine(line);
+                machineMap.put(machine.getId(), machine);
             }
         });
-        return new Instance(exams, machines, resourceMap);
+
+        // And now parse task and asign machines
+        Map<String, Task> taskMap = new HashMap<>();
+
+        lines.forEach(line -> {
+            if (line.startsWith(TASK_KEY)) {
+                Task task = parseTask(line, resourceMap, machineMap);
+                taskMap.put(task.getId(), task);
+            }
+        });
+
+        return new Instance(taskMap, machineMap, resourceMap);
     }
 
-    private static Task parseTask(String line, Map<String, Resource> resourceMap) {
+    private static Task parseTask(String line, Map<String, Resource> resourceMap, Map<String, Machine> machineMap) {
         Matcher match = TASK_PATTERN.matcher(line);
         if (match.find()) {
             String id = match.group(1);
             Integer duration = Integer.parseInt(match.group(2));
-            List<String> machines = parseArrayKeys(match.group(3));
+            List<Machine> machines = parseArrayKeys(match.group(3))
+                    .stream()
+                    .map(Machine::new)
+                    .collect(Collectors.toList());
+            if (machines == null || machines.size() == 0) {
+                machines = machineMap
+                        .values()
+                        .stream()
+                        .collect(Collectors.toList());
+            }
             List<Resource> resoruces = parseArrayKeys(match.group(4))
                     .stream()
                     .map(key -> resourceMap.get(key))
@@ -68,10 +87,10 @@ public class InstanceParser {
         }
     }
 
-    private static String parseMachine(String line) {
+    private static Machine parseMachine(String line) {
         Matcher match = MACHINE_PATTERN.matcher(line);
         if (match.find()) {
-            return match.group(1);
+            return new Machine(match.group(1));
         } else {
             throw new RuntimeException("Invalid machine entry! -> " + line);
         }

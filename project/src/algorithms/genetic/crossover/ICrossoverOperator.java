@@ -1,10 +1,8 @@
 package algorithms.genetic.crossover;
 
-import algorithms.greedy.Solution;
-import algorithms.interfaces.ISolution;
-import utils.Pair;
+import algorithms.solutions.InstanceSolution;
 
 public interface ICrossoverOperator {
 
-    Solution crossover(Solution sol1, Solution sol2);
+    InstanceSolution crossover(InstanceSolution sol1, InstanceSolution sol2);
 }

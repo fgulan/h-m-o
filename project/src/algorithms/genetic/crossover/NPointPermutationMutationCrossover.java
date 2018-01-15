@@ -1,6 +1,6 @@
 package algorithms.genetic.crossover;
 
-import algorithms.greedy.Solution;
+import algorithms.solutions.InstanceSolution;
 import algorithms.greedy.SupremeSolutionGenerator;
 import models.Instance;
 import models.Machine;
@@ -25,7 +25,7 @@ public class NPointPermutationMutationCrossover implements ICrossoverOperator {
     }
 
     @Override
-    public Solution crossover(Solution sol1, Solution sol2) {
+    public InstanceSolution crossover(InstanceSolution sol1, InstanceSolution sol2) {
         Map<Task, Machine> taskMachineMap = new HashMap<>();
 
         Instance instance = sol1.getInstance();
@@ -41,7 +41,7 @@ public class NPointPermutationMutationCrossover implements ICrossoverOperator {
                 .collect(Collectors.toList());
 
         int currentIndex = 0;
-        Solution currentSolution = sol1;
+        InstanceSolution currentSolution = sol1;
 
         for (Integer breakIndex : indexes) {
             for (int i = currentIndex; i < breakIndex; i++) {
@@ -58,7 +58,7 @@ public class NPointPermutationMutationCrossover implements ICrossoverOperator {
         return generator.generate(taskMachineMap);
     }
 
-    private void insertTask(int index, List<Task> tasks, Solution solution, Map<Task, Machine> taskMachineMap) {
+    private void insertTask(int index, List<Task> tasks, InstanceSolution solution, Map<Task, Machine> taskMachineMap) {
         Task task = tasks.get(index);
         Machine machine = solution.getMachineForTask(task);
         machine = mutate(task, machine);

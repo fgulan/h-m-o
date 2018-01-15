@@ -68,29 +68,4 @@ public class ResourceTimeTableEntry {
     public void insertEntry(int index, TaskTimeEntry entry) {
         entries.add(index, entry);
     }
-
-    public boolean isAvailable(int startTime, int endTime) {
-        boolean available = true;
-        for (TaskTimeEntry entry : entries) {
-            if (startTime <= entry.getEndTime() && endTime >= entry.getStartTime()) {
-                available = false;
-                break;
-            }
-        }
-        return available;
-    }
-
-    public boolean isSorted() {
-        boolean sorted = true;
-        Collections.sort(entries);
-        for (int i = 0; i < entries.size()-1; i++) {
-            TaskTimeEntry current = entries.get(i);
-            TaskTimeEntry next = entries.get(i + 1);
-            sorted = sorted && (current.getEndTime() <= next.getStartTime());
-            if (!sorted) {
-                System.out.println("Kurko boii");
-            }
-        }
-        return sorted;
-    }
 }

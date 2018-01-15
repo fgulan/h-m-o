@@ -99,7 +99,6 @@ public class TaskTimeEntry implements Comparable<TaskTimeEntry> {
         int newStartTime = -1, index = -1;
         int size = entries.size();
         int duration = task.getDuration();
-        int minEndTime = minStartTime + duration;
         if (size == 0) {
             newStartTime = minStartTime;
             index = 0;
@@ -121,7 +120,8 @@ public class TaskTimeEntry implements Comparable<TaskTimeEntry> {
                 for (int i = 0; i < size - 1; i++) {
                     TaskTimeEntry current = entries.get(i);
                     TaskTimeEntry next = entries.get(i + 1);
-                    if (minStartTime >= current.getEndTime() && minEndTime <= next.getStartTime()) {
+
+                    if (minStartTime >= current.getEndTime() && duration <= (next.getStartTime() - minStartTime)) {
                         index = i + 1;
                         newStartTime = minStartTime;
                         break;

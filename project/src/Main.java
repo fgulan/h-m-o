@@ -1,42 +1,83 @@
+import algorithms.evaluator.InstanceEvaluator;
 import algorithms.genetic.SteadyStateGeneticAlgorithm;
 import algorithms.genetic.crossover.ICrossoverOperator;
 import algorithms.genetic.crossover.NPointPermutationMutationCrossover;
 import algorithms.genetic.crossover.PermutationMutationCrossover;
+import algorithms.genetic.mutation.IMutationOperator;
 import algorithms.genetic.mutation.NoMutationOperator;
-import algorithms.greedy.Solution;
+import algorithms.interfaces.IAlgorithm;
+import algorithms.interfaces.IEvaluator;
+import algorithms.solutions.InstanceSolution;
 import algorithms.greedy.SupremeSolutionGenerator;
+import models.AlgorithmResult;
 import models.Instance;
 import parser.InstanceParser;
 import utils.Visualization;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
-        Instance instance = InstanceParser.parseInstanceFile("/Users/filipgulan/college/h-m-o/instances/ts10.txt");
-        SupremeSolutionGenerator sGen = new SupremeSolutionGenerator(instance);
+    private static final long MAX_GENERATIONS = 2000000000;
+    private static final long MAX_WITHOUT_CHANGE = 2000000000;
+    private static final int TOURNAMENT_SIZE = 5;
 
-        List<Solution> population = new ArrayList<>();
+    public static void main(String[] args) throws IOException {
+        String inputPathString = "/Users/filipgulan/college/h-m-o/instances/ts1.txt";
+
+        Instance instance = InstanceParser.parseInstanceFile(inputPathString);
+
+        SupremeSolutionGenerator solutionGenerator = new SupremeSolutionGenerator(instance);
+        List<InstanceSolution> population = new ArrayList<>();
         for (int i = 0, size = 100; i < size; i++) {
-            Solution solution = sGen.generate();
+            InstanceSolution solution = solutionGenerator.generate();
             population.add(solution);
         }
-        ICrossoverOperator crossover = new PermutationMutationCrossover(0.8f, 0.25f);
-        ICrossoverOperator pointCrossover = new NPointPermutationMutationCrossover(1, 0.05f);
-        SteadyStateGeneticAlgorithm ga = new SteadyStateGeneticAlgorithm(population, new NoMutationOperator(), pointCrossover, 1000000);
-        Solution bestSolution = ga.run();
-        System.out.println(bestSolution.totalDuration());
 
-        try (PrintWriter out = new PrintWriter("/Users/filipgulan/filename10.txt")) {
-            out.println(bestSolution.printIt());
+        ICrossoverOperator pointCrossover = new NPointPermutationMutationCrossover(2, 0.2f);
+        IMutationOperator mutation = new NoMutationOperator();
+        IEvaluator evaluator = new InstanceEvaluator();
+
+        IAlgorithm algorithm = new SteadyStateGeneticAlgorithm(population, mutation, pointCrossover, evaluator,
+                MAX_GENERATIONS, MAX_WITHOUT_CHANGE, TOURNAMENT_SIZE);
+        algorithm.run();
+
+        String filename = Paths.get(inputPathString).getFileName().toString();
+        printResults(algorithm.getResults(), filename);
+    }
+
+    private static void printResults(List<AlgorithmResult<InstanceSolution>> results, String filename) throws FileNotFoundException {
+        AlgorithmResult<InstanceSolution> first = results.get(0);
+        AlgorithmResult<InstanceSolution> second = results.get(1);
+        AlgorithmResult<InstanceSolution> third = results.get(2);
+
+        // Print first
+        String outputPath = "res-1m-" + filename;
+        try (PrintWriter out = new PrintWriter(outputPath)) {
+            out.println(first.getSolution().printIt());
         }
 
-        try (PrintWriter out1 = new PrintWriter("/Users/filipgulan/sol.html")) {
-            out1.println(Visualization.convertSolutionToHTML(bestSolution, instance));
+        // Print second
+        outputPath = "res-5m-" + filename;
+        try (PrintWriter out = new PrintWriter(outputPath)) {
+            out.println(second.getSolution().printIt());
+        }
+
+        // Print third
+        outputPath = "res-ne-" + filename;
+        try (PrintWriter out = new PrintWriter(outputPath)) {
+            out.println(third.getSolution().printIt());
+        }
+
+        // Print statistics
+        outputPath = "res-stats-" + filename;
+        try (PrintWriter out = new PrintWriter(outputPath)) {
+            out.println(results);
         }
     }
 }

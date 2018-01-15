@@ -1,6 +1,6 @@
 package algorithms.genetic.crossover;
 
-import algorithms.greedy.Solution;
+import algorithms.solutions.InstanceSolution;
 import algorithms.greedy.SupremeSolutionGenerator;
 import models.*;
 import utils.RandUtils;
@@ -19,7 +19,7 @@ public class PermutationMutationCrossover implements ICrossoverOperator {
     }
 
     @Override
-    public Solution crossover(Solution sol1, Solution sol2) {
+    public InstanceSolution crossover(InstanceSolution sol1, InstanceSolution sol2) {
 
         Map<Task, Machine> taskMachineMap = new HashMap<>();
         Instance instance = sol1.getInstance();
@@ -42,14 +42,14 @@ public class PermutationMutationCrossover implements ICrossoverOperator {
         return seg.generate(taskMachineMap);
     }
 
-    private Machine chooseMachine(Task task, Solution sol1, Solution sol2, Map<Task, Machine> taskMachineMap) {
+    private Machine chooseMachine(Task task, InstanceSolution sol1, InstanceSolution sol2, Map<Task, Machine> taskMachineMap) {
         Map<Task, TaskTimeEntry> tem1 = sol1.getTaskEntryMap();
         Map<Task, TaskTimeEntry> tem2 = sol2.getTaskEntryMap();
 
         Machine machine1 = tem1.get(task).getMachine();
         Machine machine2 = tem2.get(task).getMachine();
 
-        if (rand.nextFloat() < crossoverBetterProb && sol1.totalDuration() < sol2.totalDuration()) {
+        if (rand.nextFloat() < crossoverBetterProb && sol1.calculateTotalDuration() < sol2.calculateTotalDuration()) {
             return machine1;
         } else {
             return machine2;

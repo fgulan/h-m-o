@@ -1,14 +1,13 @@
 package utils;
 
-import algorithms.greedy.Solution;
+import algorithms.solutions.InstanceSolution;
 import models.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class Visualization {
 
-    public static String convertSolutionToHTML(Solution solution, Instance problem) {
+    public static String convertSolutionToHTML(InstanceSolution solution, Instance problem) {
         StringBuilder sb = new StringBuilder();
         sb.append("<html>").append("\n");
         sb.append("  <style>").append("\n");

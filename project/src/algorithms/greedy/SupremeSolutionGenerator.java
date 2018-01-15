@@ -1,5 +1,6 @@
 package algorithms.greedy;
 
+import algorithms.solutions.InstanceSolution;
 import models.*;
 import utils.Pair;
 
@@ -28,7 +29,7 @@ public class SupremeSolutionGenerator {
         this.instance = instance;
     }
 
-    public Solution generate() {
+    public InstanceSolution generate() {
         taskEntryMap = new HashMap<>();
         machineTimeTable = instance.createInitialMachineTimeTable();
         resourceTimeTable = instance.createInitialResourceTimeTable();
@@ -39,10 +40,10 @@ public class SupremeSolutionGenerator {
         for (Task task : tasks) {
             findMachineAndStartTime(task);
         }
-        return new Solution(machineTimeTable, taskEntryMap, instance);
+        return new InstanceSolution(machineTimeTable, taskEntryMap, instance);
     }
 
-    public Solution generate(Map<Task, Machine> taskMachineMap) {
+    public InstanceSolution generate(Map<Task, Machine> taskMachineMap) {
         taskEntryMap = new HashMap<>();
         machineTimeTable = instance.createInitialMachineTimeTable();
         resourceTimeTable = instance.createInitialResourceTimeTable();
@@ -62,7 +63,7 @@ public class SupremeSolutionGenerator {
             entry.setMachine(machine);
             taskEntryMap.put(task, entry);
         }
-        return new Solution(machineTimeTable, taskEntryMap, instance);
+        return new InstanceSolution(machineTimeTable, taskEntryMap, instance);
     }
 
     private TempEntry findSlot(Machine machine, Task task) {
@@ -168,8 +169,7 @@ public class SupremeSolutionGenerator {
         Insertion bestInsertion = new Insertion();
         for (ResourceTimeTableEntry timeTableEntry : timeTable) {
             Pair<Integer, Integer> currentInsertion = TaskTimeEntry.firstAvailableSlot(task, minStartTime, timeTableEntry.entries);
-            if (currentInsertion.getFirst() >= minStartTime
-                    && currentInsertion.getFirst() < newStartTime) {
+            if (currentInsertion.getFirst() < newStartTime) {
                 newStartTime = currentInsertion.getFirst();
                 bestInsertion.newStartTime = currentInsertion.getFirst();
                 bestInsertion.indexInTimeTable = currentInsertion.getSecond();

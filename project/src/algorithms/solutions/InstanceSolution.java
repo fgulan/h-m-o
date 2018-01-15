@@ -1,29 +1,26 @@
-package algorithms.greedy;
+package algorithms.solutions;
 
 import models.*;
 import utils.ArrayUtils;
 
 import java.util.*;
 
-public class Solution {
+public class InstanceSolution {
 
-    private Map<Machine, List<TaskTimeEntry>> machineTimeTable;
-    private Map<Task, TaskTimeEntry> taskEntryMap;
+    private final Map<Machine, List<TaskTimeEntry>> machineTimeTable;
+    private final Map<Task, TaskTimeEntry> taskEntryMap;
+    private final Instance instance;
 
-    private Instance instance;
     private Integer duration;
 
-    public Solution(Map<Machine, List<TaskTimeEntry>> machineTimeTable, Map<Task, TaskTimeEntry> taskEntryMap, Instance instance) {
+    public InstanceSolution(Map<Machine, List<TaskTimeEntry>> machineTimeTable, Map<Task, TaskTimeEntry> taskEntryMap, Instance instance) {
         this.machineTimeTable = machineTimeTable;
         this.instance = instance;
         this.taskEntryMap = taskEntryMap;
         this.duration = null;
     }
 
-    public int totalDuration() {
-        if (duration != null) {
-            return duration;
-        }
+    public int calculateTotalDuration() {
         int totalDuration = 0;
         for (Machine machine : instance.getMachinesList()) {
             List<TaskTimeEntry> entries = machineTimeTable.get(machine);
@@ -32,7 +29,6 @@ public class Solution {
                 totalDuration = last.getEndTime();
             }
         }
-        this.duration = totalDuration;
         return totalDuration;
     }
 
@@ -68,5 +64,13 @@ public class Solution {
 
     public Map<Machine, List<TaskTimeEntry>> getMachineTimeTable() {
         return machineTimeTable;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
     }
 }

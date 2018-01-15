@@ -1,6 +1,12 @@
 package algorithms.interfaces;
 
-public interface IAlgorithm<S extends ISolution<?>> {
+import algorithms.solutions.InstanceSolution;
+import models.AlgorithmResult;
 
-    S run();
+import java.util.List;
+
+public interface IAlgorithm {
+
+    InstanceSolution run();
+    List<AlgorithmResult<InstanceSolution>> getResults();
 }

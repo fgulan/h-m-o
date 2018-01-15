@@ -1,8 +1,8 @@
 package algorithms.genetic.mutation;
 
-import algorithms.greedy.Solution;
+import algorithms.solutions.InstanceSolution;
 
 public interface IMutationOperator {
 
-    Solution mutate(Solution solution);
+    InstanceSolution mutate(InstanceSolution solution);
 }

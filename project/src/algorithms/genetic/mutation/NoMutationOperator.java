@@ -1,11 +1,11 @@
 package algorithms.genetic.mutation;
 
-import algorithms.greedy.Solution;
+import algorithms.solutions.InstanceSolution;
 
 public class NoMutationOperator implements IMutationOperator {
 
     @Override
-    public Solution mutate(Solution solution) {
+    public InstanceSolution mutate(InstanceSolution solution) {
         return solution;
     }
 }

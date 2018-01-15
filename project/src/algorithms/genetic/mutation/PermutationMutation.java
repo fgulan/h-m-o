@@ -4,7 +4,6 @@ import algorithms.greedy.Solution;
 import models.Machine;
 import models.Task;
 import models.TaskTimeEntry;
-import utils.ArrayUtils;
 import utils.Pair;
 import utils.RandUtils;
 
@@ -34,7 +33,7 @@ public class PermutationMutation implements IMutationOperator {
 
         Map<Machine, List<TaskTimeEntry>> mtt = solution.getMachineTimeTable();
         List<Machine> machines = new ArrayList<>(mtt.keySet());
-//        Collections.shuffle(machines);
+        Collections.shuffle(machines);
 
         for (Machine machine : machines) {
             if (leftSwaps <= 0) {

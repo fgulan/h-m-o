@@ -66,64 +66,18 @@ public class ResourceTimeTableEntry {
     }
 
     public void insertEntry(int index, TaskTimeEntry entry) {
-        if (entries.contains(entry)) {
-            System.out.println("Entry already exists");
-        }
         entries.add(index, entry);
     }
 
-    public boolean addEntry(TaskTimeEntry entry) {
-        int insertIndex = -1;
-        int size = entries.size();
-//        if (size == 0) {
-//            entries.add(entry);
-//            return true;
-//        } else if (size == 1) {
-//        } else {
-//            entries.add(entry);
-//            return true;
-//        }
-
-        if (size == 0) {
-            insertIndex = 0;
-        } else if (size == 1) {
-            TaskTimeEntry currentEntry = entries.get(0);
-            if (currentEntry.getStartTime() >= entry.getTask().getDuration()) {
-                insertIndex = 0;
-            } else {
-                insertIndex = 1;
+    public boolean isAvailable(int startTime, int endTime) {
+        boolean available = true;
+        for (TaskTimeEntry entry : entries) {
+            if (startTime <= entry.getEndTime() && endTime >= entry.getStartTime()) {
+                available = false;
+                break;
             }
-        } else {
-            insertIndex = size;
         }
-
-        if (insertIndex >= 0) {
-            entries.add(insertIndex, entry);
-        }
-
-        return insertIndex >= 0;
-//        int insertIndex = -1;
-//
-//        for (int i = 0; i < size - 1; i++) {
-//            TaskTimeEntry current = entries.get(i);
-//            TaskTimeEntry next = entries.get(i + 1);
-//            if (next.getStartTime() - current.getEndTime() >= entry.getDuration()) {
-//                insertIndex = i + 1;
-//                break;
-//            } else if (i + 1 == size - 1) {
-//                if (entry.getStartTime() >= next.getEndTime()) {
-//                    insertIndex = size;
-//                }
-//            }
-//        }
-//
-//        if (insertIndex == -1) {
-//            return false;
-//        } else {
-//            entries.add(insertIndex, entry);
-//            return true;
-//        }
-
+        return available;
     }
 
     public boolean isSorted() {

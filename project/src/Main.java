@@ -1,8 +1,10 @@
 import algorithms.genetic.SteadyStateGeneticAlgorithm;
-import algorithms.genetic.crossover.PermutationCrossover;
-import algorithms.genetic.mutation.PermutationMutation;
-import algorithms.greedy.GreedySolutionGenerator;
+import algorithms.genetic.crossover.ICrossoverOperator;
+import algorithms.genetic.crossover.NPointPermutationMutationCrossover;
+import algorithms.genetic.crossover.PermutationMutationCrossover;
+import algorithms.genetic.mutation.NoMutationOperator;
 import algorithms.greedy.Solution;
+import algorithms.greedy.SupremeSolutionGenerator;
 import models.Instance;
 import parser.InstanceParser;
 import utils.Visualization;
@@ -15,52 +17,25 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        Instance instance = InstanceParser.parseInstanceFile("/Users/filipgulan/college/h-m-o/instances/ts1.txt");
-        GreedySolutionGenerator generator = new GreedySolutionGenerator(instance);
+        Instance instance = InstanceParser.parseInstanceFile("/Users/filipgulan/college/h-m-o/instances/ts10.txt");
+        SupremeSolutionGenerator sGen = new SupremeSolutionGenerator(instance);
 
         List<Solution> population = new ArrayList<>();
-        for (int i = 0, size = 400; i < size; i++) {
-            Solution solution = generator
-                    .generateBasicSolution()
-                    .makeItFeasible()
-                    .compressClearedTasks();
+        for (int i = 0, size = 100; i < size; i++) {
+            Solution solution = sGen.generate();
             population.add(solution);
         }
-        PermutationCrossover crossover = new PermutationCrossover();
-        PermutationMutation mutation = new PermutationMutation(0.2f, 250);
-
-        SteadyStateGeneticAlgorithm ga = new SteadyStateGeneticAlgorithm(population, mutation, crossover, 500374);
+        ICrossoverOperator crossover = new PermutationMutationCrossover(0.8f, 0.25f);
+        ICrossoverOperator pointCrossover = new NPointPermutationMutationCrossover(1, 0.05f);
+        SteadyStateGeneticAlgorithm ga = new SteadyStateGeneticAlgorithm(population, new NoMutationOperator(), pointCrossover, 1000000);
         Solution bestSolution = ga.run();
-
-//        Solution sol1 = generator.generateBasicSolution().makeItFeasible();
-//        Solution sol2 = generator.generateBasicSolution().makeItFeasible();
-//        Solution solution = crossover.crossover(sol1, sol2);
-//        solution = mutation.mutate(solution);
-//        solution = solution.makeItFeasible().compressClearedTasks();
-//        Solution bestSolution = solution;
-//        for (int i = 0, end = 10000; i < end; i++) {
-//            sol1 = generator.generateBasicSolution().makeItFeasible();
-//            sol2 = generator.generateBasicSolution().makeItFeasible();
-//            if (sol1.totalDuration() < sol2.totalDuration()) {
-//                solution = crossover.crossover(sol1, bestSolution);
-//            } else {
-//                solution = crossover.crossover(sol2, bestSolution);
-//            }
-//            solution = mutation.mutate(solution);
-//            solution = solution.makeItFeasible().compressClearedTasks();
-//            if (solution.totalDuration() < bestSolution.totalDuration()) {
-//                System.out.println("iteracija: " + i);
-//                System.out.println(solution.totalDuration());
-//                bestSolution = solution;
-//            }
-//        }
         System.out.println(bestSolution.totalDuration());
 
-        try(  PrintWriter out = new PrintWriter( "/Users/filipgulan/filename10.txt" )  ){
-            out.println( bestSolution.printIt() );
+        try (PrintWriter out = new PrintWriter("/Users/filipgulan/filename10.txt")) {
+            out.println(bestSolution.printIt());
         }
 
-        try(  PrintWriter out1 = new PrintWriter( "/Users/filipgulan/sol.html" )  ){
+        try (PrintWriter out1 = new PrintWriter("/Users/filipgulan/sol.html")) {
             out1.println(Visualization.convertSolutionToHTML(bestSolution, instance));
         }
     }

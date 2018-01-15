@@ -1,6 +1,10 @@
 package models;
 
+import utils.ArrayUtils;
+import utils.Pair;
+
 import javax.crypto.Mac;
+import java.util.List;
 import java.util.Objects;
 
 public class TaskTimeEntry implements Comparable<TaskTimeEntry> {
@@ -90,4 +94,49 @@ public class TaskTimeEntry implements Comparable<TaskTimeEntry> {
 
         return Objects.hash(startTime);
     }
+
+    public static Pair<Integer, Integer> firstAvailableSlot(Task task, int minStartTime, List<TaskTimeEntry> entries) {
+        int newStartTime = -1, index = -1;
+        int size = entries.size();
+        int duration = task.getDuration();
+        int minEndTime = minStartTime + duration;
+        if (size == 0) {
+            newStartTime = minStartTime;
+            index = 0;
+        } else if (size == 1) {
+            TaskTimeEntry currEntry = entries.get(0);
+            if (currEntry.getStartTime() - duration >= minStartTime) {
+                newStartTime = minStartTime;
+                index = 0;
+            } else {
+                newStartTime = Math.max(currEntry.getEndTime(), minStartTime);
+                index = 1;
+            }
+        } else {
+            TaskTimeEntry currEntry = entries.get(0);
+            if (currEntry.getStartTime() - duration >= minStartTime) {
+                newStartTime = minStartTime;
+                index = 0;
+            } else {
+                for (int i = 0; i < size - 1; i++) {
+                    TaskTimeEntry current = entries.get(i);
+                    TaskTimeEntry next = entries.get(i + 1);
+                    if (minStartTime >= current.getEndTime() && minEndTime <= next.getStartTime()) {
+                        index = i + 1;
+                        newStartTime = minStartTime;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (index == -1) {
+            TaskTimeEntry last = ArrayUtils.getLast(entries);
+            index = size;
+            newStartTime = Math.max(last.getEndTime(), minStartTime);
+        }
+
+        return new Pair<>(newStartTime, index);
+    }
+
 }

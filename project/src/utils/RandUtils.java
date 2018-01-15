@@ -1,6 +1,11 @@
 package utils;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RandUtils {
 
@@ -19,16 +24,24 @@ public class RandUtils {
         return random.nextFloat();
     }
 
+    public int nextInt(int bound) {
+        return random.nextInt(bound);
+    }
+
     public static RandUtils getInstance() {
         return instance;
     }
 
     public Pair<Integer, Integer> nextIntPair(int bound) {
-        int first = random.nextInt(bound);
-        int second = random.nextInt(bound);
-//        while (first == second) {
-//            second = random.nextInt(bound);
-//        }
-        return new Pair<>(first, second);
+        List<Integer> indexes = generateIndexes(2, bound).collect(Collectors.toList());
+        return new Pair<>(indexes.get(0), indexes.get(1));
+    }
+
+    public Stream<Integer> generateIndexes(int count, int bound) {
+        Set<Integer> intSet = new HashSet<>();
+        while (intSet.size() < count) {
+            intSet.add(random.nextInt(bound));
+        }
+        return intSet.stream();
     }
 }

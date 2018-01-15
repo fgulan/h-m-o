@@ -14,6 +14,7 @@ public class Instance {
     private final List<Resource> resourcesList;
 
     private final List<Task> clearTasksList;
+    private final List<Task> resourcedTasksList;
 
     private Random random;
 
@@ -32,6 +33,9 @@ public class Instance {
         this.sorted = sorted;
         this.clearTasksList = tasksList.stream()
                 .filter(task -> task.getResources().isEmpty())
+                .collect(Collectors.toList());
+        this.resourcedTasksList = tasksList.stream()
+                .filter(task -> !task.getResources().isEmpty())
                 .collect(Collectors.toList());
     }
 
@@ -81,11 +85,27 @@ public class Instance {
         return clearTasksList;
     }
 
+    public List<Task> getResourcedTasksList() {
+        return resourcedTasksList;
+    }
+
     public Map<Machine, List<TaskTimeEntry>> createInitialMachineTimeTable() {
         Map<Machine, List<TaskTimeEntry>> machineTimeTable = new HashMap<>();
         for (Machine machine : machinesList) {
             machineTimeTable.put(machine, new ArrayList<>());
         }
         return machineTimeTable;
+    }
+
+    public Map<Resource, List<ResourceTimeTableEntry>> createInitialResourceTimeTable() {
+        Map<Resource, List<ResourceTimeTableEntry>> resourceTimeTable = new HashMap<>();
+        for (Resource resource : resourcesList) {
+            List<ResourceTimeTableEntry> entries = new ArrayList<>();
+            for (int i = 0; i < resource.getCount(); i++) {
+                entries.add(new ResourceTimeTableEntry(resource));
+            }
+            resourceTimeTable.put(resource, entries);
+        }
+        return resourceTimeTable;
     }
 }

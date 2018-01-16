@@ -23,7 +23,7 @@ public class Main {
 
     private static final long MAX_GENERATIONS = 2000000000;
     private static final long MAX_WITHOUT_CHANGE = 2000000000;
-    private static final int TOURNAMENT_SIZE = 5;
+    private static final int TOURNAMENT_SIZE = 3;
 
     public static void main(String[] args) throws IOException {
         String inputPathString = "/Users/filipgulan/college/h-m-o/instances/ts10.txt";
@@ -37,7 +37,7 @@ public class Main {
             population.add(solution);
         }
 
-        ICrossoverOperator pointCrossover = new NPointPermutationMutationCrossover(2, 0.2f);
+        ICrossoverOperator pointCrossover = new NPointPermutationMutationCrossover(2, 0.3f);
         IMutationOperator mutation = new NoMutationOperator();
         IEvaluator evaluator = new InstanceEvaluator();
 

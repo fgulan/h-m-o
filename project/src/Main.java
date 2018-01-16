@@ -21,8 +21,8 @@ import java.util.List;
 
 public class Main {
 
-    private static final long MAX_GENERATIONS = 2000000000;
-    private static final long MAX_WITHOUT_CHANGE = 2000000000;
+    private static final long MAX_GENERATIONS = Long.MAX_VALUE;
+    private static final long MAX_WITHOUT_CHANGE = Long.MAX_VALUE;
     private static final int TOURNAMENT_SIZE = 3;
 
     public static void main(String[] args) throws IOException {
@@ -37,7 +37,7 @@ public class Main {
             population.add(solution);
         }
 
-        ICrossoverOperator pointCrossover = new NPointPermutationMutationCrossover(2, 0.3f);
+        ICrossoverOperator pointCrossover = new NPointPermutationMutationCrossover(1, 0.3f);
         IMutationOperator mutation = new NoMutationOperator();
         IEvaluator evaluator = new InstanceEvaluator();
 

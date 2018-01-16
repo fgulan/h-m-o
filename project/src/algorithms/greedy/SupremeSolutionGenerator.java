@@ -37,6 +37,8 @@ public class SupremeSolutionGenerator {
         List<Task> tasks = instance.getTasksList();
         Collections.sort(tasks, (o1, o2) -> Integer.compare(o2.getDuration(), o1.getDuration()));
 
+        Collections.shuffle(tasks);
+
         for (Task task : tasks) {
             findMachineAndStartTime(task);
         }
@@ -49,7 +51,11 @@ public class SupremeSolutionGenerator {
         resourceTimeTable = instance.createInitialResourceTimeTable();
 
         List<Task> tasks = new ArrayList<>(taskMachineMap.keySet());
+        // First long tasks, then short ones
         Collections.sort(tasks, (o1, o2) -> Integer.compare(o2.getDuration(), o1.getDuration()));
+
+        Collections.shuffle(tasks);
+
         for (Task task : tasks) {
             Machine machine = taskMachineMap.get(task);
             TempEntry tempEntry = findSlot(machine, task);
@@ -92,6 +98,7 @@ public class SupremeSolutionGenerator {
 
     private void findMachineAndStartTime(Task task) {
         List<Machine> possibleMachines = task.getMachines();
+        Collections.shuffle(possibleMachines);
 
         Machine bestMachine = null;
         Pair<Integer, Integer> stim = null;

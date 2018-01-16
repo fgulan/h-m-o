@@ -2,7 +2,6 @@ import algorithms.evaluator.InstanceEvaluator;
 import algorithms.genetic.SteadyStateGeneticAlgorithm;
 import algorithms.genetic.crossover.ICrossoverOperator;
 import algorithms.genetic.crossover.NPointPermutationMutationCrossover;
-import algorithms.genetic.crossover.PermutationMutationCrossover;
 import algorithms.genetic.mutation.IMutationOperator;
 import algorithms.genetic.mutation.NoMutationOperator;
 import algorithms.interfaces.IAlgorithm;
@@ -12,7 +11,6 @@ import algorithms.greedy.SupremeSolutionGenerator;
 import models.AlgorithmResult;
 import models.Instance;
 import parser.InstanceParser;
-import utils.Visualization;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,13 +26,13 @@ public class Main {
     private static final int TOURNAMENT_SIZE = 5;
 
     public static void main(String[] args) throws IOException {
-        String inputPathString = "/Users/filipgulan/college/h-m-o/instances/ts1.txt";
+        String inputPathString = "/Users/filipgulan/college/h-m-o/instances/ts10.txt";
 
         Instance instance = InstanceParser.parseInstanceFile(inputPathString);
 
         SupremeSolutionGenerator solutionGenerator = new SupremeSolutionGenerator(instance);
         List<InstanceSolution> population = new ArrayList<>();
-        for (int i = 0, size = 100; i < size; i++) {
+        for (int i = 0, size = 150; i < size; i++) {
             InstanceSolution solution = solutionGenerator.generate();
             population.add(solution);
         }

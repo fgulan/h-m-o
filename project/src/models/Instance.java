@@ -102,7 +102,7 @@ public class Instance {
         for (Resource resource : resourcesList) {
             List<ResourceTimeTableEntry> entries = new ArrayList<>();
             for (int i = 0; i < resource.getCount(); i++) {
-                entries.add(new ResourceTimeTableEntry(resource));
+                entries.add(new ResourceTimeTableEntry());
             }
             resourceTimeTable.put(resource, entries);
         }

@@ -1,0 +1,1 @@
+[AlgorithmResult{evaluationCount=27723, bestFitness=46245, time=60000}, AlgorithmResult{evaluationCount=136171, bestFitness=46148, time=300000}, AlgorithmResult{evaluationCount=795567, bestFitness=45936, time=1800000}]

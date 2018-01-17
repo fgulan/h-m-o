@@ -26,7 +26,7 @@ public class Main {
     private static final int TOURNAMENT_SIZE = 3;
 
     public static void main(String[] args) throws IOException {
-        String inputPathString = "/Users/filipgulan/college/h-m-o/instances/ts10.txt";
+        String inputPathString = "C:\\Users\\gulan_filip\\Documents\\h-m-o\\instances\\ts9.txt";
 
         Instance instance = InstanceParser.parseInstanceFile(inputPathString);
 
@@ -37,7 +37,7 @@ public class Main {
             population.add(solution);
         }
 
-        ICrossoverOperator pointCrossover = new NPointPermutationMutationCrossover(1, 0.25f);
+        ICrossoverOperator pointCrossover = new NPointPermutationMutationCrossover(1, 0.3f);
         IMutationOperator mutation = new NoMutationOperator();
         IEvaluator evaluator = new InstanceEvaluator();
 

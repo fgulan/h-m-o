@@ -34,11 +34,10 @@ public class Main {
         List<InstanceSolution> population = new ArrayList<>();
         for (int i = 0, size = 150; i < size; i++) {
             InstanceSolution solution = solutionGenerator.generate();
-            solution.printIt();
             population.add(solution);
         }
 
-        ICrossoverOperator pointCrossover = new NPointPermutationMutationCrossover(1, 0.3f);
+        ICrossoverOperator pointCrossover = new NPointPermutationMutationCrossover(1, 0.25f);
         IMutationOperator mutation = new NoMutationOperator();
         IEvaluator evaluator = new InstanceEvaluator();
 

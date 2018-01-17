@@ -53,7 +53,7 @@ public class SupremeSolutionGenerator {
         Collections.shuffle(tasks);
         // First long tasks, then short ones
 //        Collections.sort(tasks, (o1, o2) -> Integer.compare(o2.getDuration(), o1.getDuration()));
-        Collections.shuffle(tasks);
+
         for (Task task : tasks) {
             Machine machine = taskMachineMap.get(task);
             TempEntry tempEntry = findSlot(machine, task);

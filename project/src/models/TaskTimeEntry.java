@@ -99,7 +99,6 @@ public class TaskTimeEntry implements Comparable<TaskTimeEntry> {
         int newStartTime = minStartTime, index = -1;
         int size = entries.size();
         int duration = task.getDuration();
-        int minEndTime = minStartTime + duration;
 
         if (size == 0) {
             newStartTime = minStartTime;
@@ -114,26 +113,27 @@ public class TaskTimeEntry implements Comparable<TaskTimeEntry> {
                 index = 1;
             }
         } else {
+            int hole = Integer.MAX_VALUE;
+
             TaskTimeEntry currEntry = entries.get(0);
             if (currEntry.getStartTime() - duration >= minStartTime) {
-                newStartTime = minStartTime;
                 index = 0;
-            } else {
-                int hole = Integer.MAX_VALUE;
+                newStartTime = currEntry.getStartTime() - duration;
+                hole = currEntry.getStartTime();
+            }
 
-                for (int i = 0; i < size - 1; i++) {
-                    TaskTimeEntry current = entries.get(i);
-                    TaskTimeEntry next = entries.get(i + 1);
-                    int startTime = Math.max(minStartTime, current.getEndTime());
-                    int endTime = startTime + duration;
+            for (int i = 0; i < size - 1; i++) {
+                TaskTimeEntry current = entries.get(i);
+                TaskTimeEntry next = entries.get(i + 1);
+                int startTime = Math.max(minStartTime, current.getEndTime());
+                int endTime = startTime + duration;
 
-                    if (startTime >= current.getEndTime() && endTime <= next.getStartTime()) {
-                        int currentHole = next.getStartTime() - current.getEndTime();
-                        if (currentHole < hole) {
-                            index = i + 1;
-                            newStartTime = startTime;
-                            hole = currentHole;
-                        }
+                if (startTime >= current.getEndTime() && endTime <= next.getStartTime()) {
+                    int currentHole = next.getStartTime() - current.getEndTime();
+                    if (currentHole < hole) {
+                        index = i + 1;
+                        newStartTime = startTime;
+                        hole = currentHole;
                     }
                 }
             }

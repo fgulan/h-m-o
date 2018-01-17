@@ -23,21 +23,23 @@ public class Main {
 
     private static final long MAX_GENERATIONS = Long.MAX_VALUE;
     private static final long MAX_WITHOUT_CHANGE = Long.MAX_VALUE;
+    private static final float MUTATION = 0.35f;
+    private static final int N_POINT = 2;
     private static final int TOURNAMENT_SIZE = 3;
 
     public static void main(String[] args) throws IOException {
-        String inputPathString = "C:\\Users\\gulan_filip\\Documents\\h-m-o\\instances\\ts9.txt";
+        String inputPathString = "C:\\Users\\gulan_filip\\Documents\\h-m-o\\instances\\ts1.txt";
 
         Instance instance = InstanceParser.parseInstanceFile(inputPathString);
 
         SupremeSolutionGenerator solutionGenerator = new SupremeSolutionGenerator(instance);
         List<InstanceSolution> population = new ArrayList<>();
-        for (int i = 0, size = 150; i < size; i++) {
+        for (int i = 0, size = 100; i < size; i++) {
             InstanceSolution solution = solutionGenerator.generate();
             population.add(solution);
         }
 
-        ICrossoverOperator pointCrossover = new NPointPermutationMutationCrossover(1, 0.3f);
+        ICrossoverOperator pointCrossover = new NPointPermutationMutationCrossover(N_POINT, MUTATION);
         IMutationOperator mutation = new NoMutationOperator();
         IEvaluator evaluator = new InstanceEvaluator();
 

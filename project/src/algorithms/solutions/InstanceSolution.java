@@ -2,10 +2,34 @@ package algorithms.solutions;
 
 import models.*;
 import utils.ArrayUtils;
+import utils.Pair;
 
 import java.util.*;
 
 public class InstanceSolution {
+
+    private class PrintEntry {
+        final String taskID;
+        final int startTime;
+        final String machineID;
+
+        public PrintEntry(String taskID, int startTime, String machineID) {
+            this.taskID = taskID;
+            this.startTime = startTime;
+            this.machineID = machineID;
+        }
+
+        public PrintEntry(TaskTimeEntry entry) {
+            this.taskID = entry.getTask().getId();
+            this.startTime = entry.getStartTime();
+            this.machineID = entry.getMachine().getId();
+        }
+
+        @Override
+        public String toString() {
+            return String.format("'%s',%d,'%s'.\n", taskID, startTime, machineID);
+        }
+    }
 
     private final Map<Machine, List<TaskTimeEntry>> machineTimeTable;
     private final Map<Task, TaskTimeEntry> taskEntryMap;
@@ -35,17 +59,23 @@ public class InstanceSolution {
     public String printIt() {
         StringBuilder builder = new StringBuilder();
         List<Machine> keys = new ArrayList<>(machineTimeTable.keySet());
+
+        List<Pair<Task, PrintEntry>> printEntries = new ArrayList<>();
+
         for (Machine machine : keys) {
             List<TaskTimeEntry> entries = machineTimeTable.get(machine);
             if (entries == null) {
                 continue;
             }
             for (TaskTimeEntry entry : entries) {
-                builder.append(String.format("'%s',%d,'%s'.\n",
-                        entry.getTask().getId(),
-                        entry.getStartTime(),
-                        machine.getId()));
+                PrintEntry printEntry = new PrintEntry(entry);
+                printEntries.add(new Pair<>(entry.getTask(), printEntry));
             }
+        }
+
+        Collections.sort(printEntries, Comparator.comparingInt(o -> o.getFirst().getIntId()));
+        for (Pair<Task, PrintEntry> pair : printEntries) {
+            builder.append(pair.getSecond());
         }
         return builder.toString();
     }

@@ -8,12 +8,15 @@ import java.util.Objects;
 public class Task {
 
     private final String id;
+    private final int intId;
+
     private final int duration;
     private final List<Machine> machines;
     private final List<Resource> resources;
 
     public Task(String id, int duration, List<Machine> machines, List<Resource> resources) {
         this.id = id;
+        this.intId = Integer.valueOf(id.replace("t", ""));
         this.duration = duration;
         this.machines = Collections.unmodifiableList(machines);
         this.resources = Collections.unmodifiableList(resources);
@@ -21,6 +24,10 @@ public class Task {
 
     public String getId() {
         return id;
+    }
+
+    public int getIntId() {
+        return intId;
     }
 
     public int getDuration() {

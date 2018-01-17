@@ -16,7 +16,7 @@ public class SteadyStateGeneticAlgorithm implements IAlgorithm {
 
     private static final int MINUTES_1_MILIS = 1 * 60 * 1_000;
     private static final int MINUTES_5_MILIS = 5 * 60 * 1_000;
-    private static final int MINUTES_20_MILIS = 20 * 60 * 1_000;
+    private static final int MINUTES_20_MILIS = 15 * 60 * 1_000;
 
     private List<InstanceSolution> population;
     private final IMutationOperator mutation;

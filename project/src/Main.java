@@ -34,6 +34,7 @@ public class Main {
         List<InstanceSolution> population = new ArrayList<>();
         for (int i = 0, size = 150; i < size; i++) {
             InstanceSolution solution = solutionGenerator.generate();
+            solution.printIt();
             population.add(solution);
         }
 

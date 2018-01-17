@@ -23,13 +23,15 @@ public class Main {
 
     private static final long MAX_GENERATIONS = Long.MAX_VALUE;
     private static final long MAX_WITHOUT_CHANGE = Long.MAX_VALUE;
-    private static final float MUTATION = 0.35f;
+    private static final float MUTATION = 0.15f;
     private static final int N_POINT = 2;
     private static final int TOURNAMENT_SIZE = 3;
 
     public static void main(String[] args) throws IOException {
-        String inputPathString = "C:\\Users\\gulan_filip\\Documents\\h-m-o\\instances\\ts1.txt";
+        String inputPathString = "C:\\Users\\gulan_filip\\Documents\\h-m-o\\instances\\ts10.txt";
+        String filename = Paths.get(inputPathString).getFileName().toString();
 
+        System.out.println("Working on file: " + filename);
         Instance instance = InstanceParser.parseInstanceFile(inputPathString);
 
         SupremeSolutionGenerator solutionGenerator = new SupremeSolutionGenerator(instance);
@@ -47,7 +49,6 @@ public class Main {
                 MAX_GENERATIONS, MAX_WITHOUT_CHANGE, TOURNAMENT_SIZE);
         algorithm.run();
 
-        String filename = Paths.get(inputPathString).getFileName().toString();
         printResults(algorithm.getResults(), filename);
     }
 

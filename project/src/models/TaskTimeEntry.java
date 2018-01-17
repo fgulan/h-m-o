@@ -106,7 +106,7 @@ public class TaskTimeEntry implements Comparable<TaskTimeEntry> {
         } else if (size == 1) {
             TaskTimeEntry currEntry = entries.get(0);
             if (currEntry.getStartTime() - duration >= minStartTime) {
-                newStartTime = minStartTime;
+                newStartTime = currEntry.getStartTime() - duration;
                 index = 0;
             } else {
                 newStartTime = Math.max(currEntry.getEndTime(), minStartTime);
@@ -119,7 +119,7 @@ public class TaskTimeEntry implements Comparable<TaskTimeEntry> {
             if (currEntry.getStartTime() - duration >= minStartTime) {
                 index = 0;
                 newStartTime = currEntry.getStartTime() - duration;
-                hole = currEntry.getStartTime();
+                hole = newStartTime;
             }
 
             for (int i = 0; i < size - 1; i++) {
@@ -129,7 +129,7 @@ public class TaskTimeEntry implements Comparable<TaskTimeEntry> {
                 int endTime = startTime + duration;
 
                 if (startTime >= current.getEndTime() && endTime <= next.getStartTime()) {
-                    int currentHole = next.getStartTime() - current.getEndTime();
+                    int currentHole = startTime - current.getEndTime();
                     if (currentHole < hole) {
                         index = i + 1;
                         newStartTime = startTime;

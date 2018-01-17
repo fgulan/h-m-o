@@ -75,19 +75,23 @@ public class SupremeSolutionGenerator {
         Pair<Integer, Integer> startTime_index_machine;
         List<Insertion> allInsertions;
         while (true) {
-            startTime_index_machine = getBestMachineStartTime(task, machine, newStartTime);
-            allInsertions = getBestResourcesStartTime(task, task.getResources(), newStartTime);
+            Pair<Integer, Integer> currentStim = getBestMachineStartTime(task, machine, newStartTime);
+            List<Insertion> currentInsertions = getBestResourcesStartTime(task, task.getResources(), newStartTime);
 
-            if (allInsertions.isEmpty()) {
-                newStartTime = startTime_index_machine.getFirst();
+            if (currentInsertions.isEmpty()) {
+                newStartTime = currentStim.getFirst();
+                startTime_index_machine = currentStim;
+                allInsertions = currentInsertions;
                 break;
             } else {
-                Insertion insertion = allInsertions.get(0);
-                if (startTime_index_machine.getFirst() == insertion.newStartTime) {
-                    newStartTime = startTime_index_machine.getFirst();
+                Insertion insertion = currentInsertions.get(0);
+                if (currentStim.getFirst() == insertion.newStartTime) {
+                    startTime_index_machine = currentStim;
+                    newStartTime = currentStim.getFirst();
+                    allInsertions = currentInsertions;
                     break;
                 } else {
-                    newStartTime = Math.max(startTime_index_machine.getFirst(), insertion.newStartTime);
+                    newStartTime = Math.max(currentStim.getFirst(), insertion.newStartTime);
                 }
             }
         }
@@ -110,6 +114,7 @@ public class SupremeSolutionGenerator {
                 bestMachine = machine;
                 stim = tempEntry.stim;
                 bestInsertions = tempEntry.allInsertions;
+                lastStartTime = tempEntry.newStartTime;
             }
         }
 
